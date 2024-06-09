@@ -124,8 +124,7 @@ mkDerivation (finalAttrs: {
 
   separateDebugInfo = !stdenv.hostPlatform.isStatic;
 
-  # TODO `releaseTools.coverageAnalysis` in Nixpkgs needs to be updated
-  # to work with `strictDeps`.
+  # TODO Always true after https://github.com/NixOS/nixpkgs/issues/318564
   strictDeps = !withCoverageChecks;
 
   hardeningDisable = lib.optional stdenv.hostPlatform.isStatic "pie";
