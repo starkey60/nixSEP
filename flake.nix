@@ -257,21 +257,6 @@
         inherit (nixpkgsFor.${system}.native)
           changelog-d;
         default = self.packages.${system}.nix;
-      } // lib.optionalAttrs (builtins.elem system linux64BitSystems) {
-        dockerImage =
-          let
-            pkgs = nixpkgsFor.${system}.native;
-            image = import ./docker.nix { inherit pkgs; tag = version; };
-          in
-          pkgs.runCommand
-            "docker-image-tarball-${version}"
-            { meta.description = "Docker image with Nix for ${system}"; }
-            ''
-              mkdir -p $out/nix-support
-              image=$out/image.tar.gz
-              ln -s ${image} $image
-              echo "file binary-dist $image" >> $out/nix-support/hydra-build-products
-            '';
       } // lib.concatMapAttrs
         (pkgName: { }: {
           "${pkgName}" = nixpkgsFor.${system}.native.${pkgName};
@@ -290,7 +275,23 @@
           "nix" = { };
           "nix-util" = { };
           "nix-store" = { };
-        });
+        }
+      // lib.optionalAttrs (builtins.elem system linux64BitSystems) {
+        dockerImage =
+          let
+            pkgs = nixpkgsFor.${system}.native;
+            image = import ./docker.nix { inherit pkgs; tag = version; };
+          in
+          pkgs.runCommand
+            "docker-image-tarball-${version}"
+            { meta.description = "Docker image with Nix for ${system}"; }
+            ''
+              mkdir -p $out/nix-support
+              image=$out/image.tar.gz
+              ln -s ${image} $image
+              echo "file binary-dist $image" >> $out/nix-support/hydra-build-products
+            '';
+      });
 
       devShells = let
         makeShell = pkgs: stdenv: (pkgs.nix.override { inherit stdenv; forDevShell = true; }).overrideAttrs (attrs:
