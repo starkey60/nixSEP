@@ -253,14 +253,10 @@
       } // devFlake.checks.${system} or {}
       );
 
-      packages = forAllSystems (system:
-      rec {
+      packages = forAllSystems (system: {
         inherit (nixpkgsFor.${system}.native)
-          nix
-          nix-util
-          nix-store
           changelog-d;
-        default = nix;
+        default = self.packages.${system}.nix;
       } // lib.optionalAttrs (builtins.elem system linux64BitSystems) {
         dockerImage =
           let
@@ -278,6 +274,7 @@
             '';
       } // lib.concatMapAttrs
         (pkgName: { }: {
+          "${pkgName}" = nixpkgsFor.${system}.native.${pkgName};
           "${pkgName}-static" = nixpkgsFor.${system}.static.${pkgName};
         } // lib.concatMapAttrs
             (crossSystem: { }: {
