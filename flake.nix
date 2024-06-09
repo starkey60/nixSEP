@@ -253,13 +253,8 @@
       } // devFlake.checks.${system} or {}
       );
 
-      packages = forAllSystems (system: let
-        forAllPackagesList = lib.flip map [
-          "nix"
-          "nix-util"
-          "nix-store"
-        ];
-      in rec {
+      packages = forAllSystems (system:
+      rec {
         inherit (nixpkgsFor.${system}.native)
           nix
           nix-util
