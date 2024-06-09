@@ -306,6 +306,11 @@
           havePerl = stdenv.buildPlatform == stdenv.hostPlatform && stdenv.hostPlatform.isUnix;
         in {
           pname = "shell-for-" + attrs.pname;
+
+          # Remove the version suffix to avoid unnecessary attempts to substitute in nix develop
+          version = lib.fileContents ./.version;
+          name = attrs.pname;
+
           installFlags = "sysconfdir=$(out)/etc";
           shellHook = ''
             PATH=$prefix/bin:$PATH
