@@ -17,8 +17,6 @@
 
 # Configuration Options
 
-, pname ? "nix-util"
-
 , versionSuffix ? ""
 , officialRelease ? false
 
@@ -41,7 +39,8 @@ let
 in
 
 mkDerivation (finalAttrs: {
-  inherit pname version;
+  pname = "nix-util";
+  inherit version;
 
   src = fileset.toSource {
     root = ./.;

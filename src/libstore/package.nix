@@ -20,8 +20,6 @@
 
 # Configuration Options
 
-, pname ? "nix-store"
-
 , versionSuffix ? ""
 , officialRelease ? false
 
@@ -47,7 +45,8 @@ let
 in
 
 mkDerivation (finalAttrs: {
-  inherit pname version;
+  pname = "nix-store";
+  inherit version;
 
   src = fileset.toSource {
     root = ./.;
