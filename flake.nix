@@ -258,25 +258,25 @@
           changelog-d;
         default = self.packages.${system}.nix;
       } // lib.concatMapAttrs
-        (pkgName: { }: {
+        (pkgName: {}: {
           "${pkgName}" = nixpkgsFor.${system}.native.${pkgName};
           "${pkgName}-static" = nixpkgsFor.${system}.static.${pkgName};
         } // lib.concatMapAttrs
-            (crossSystem: { }: {
-              "${pkgName}-${crossSystem}" = nixpkgsFor.${system}.cross.${crossSystem}.${pkgName};
-            })
-            (lib.genAttrs crossSystems (_: {}))
-          // lib.concatMapAttrs
-            (stdenvName: { }: {
-             "${pkgName}-${stdenvName}" = nixpkgsFor.${system}.stdenvs."${stdenvName}Packages".${pkgName};
-            })
-            (lib.genAttrs stdenvs (_: {})))
+          (crossSystem: {}: {
+            "${pkgName}-${crossSystem}" = nixpkgsFor.${system}.cross.${crossSystem}.${pkgName};
+          })
+          (lib.genAttrs crossSystems (_: { }))
+        // lib.concatMapAttrs
+          (stdenvName: {}: {
+            "${pkgName}-${stdenvName}" = nixpkgsFor.${system}.stdenvs."${stdenvName}Packages".${pkgName};
+          })
+          (lib.genAttrs stdenvs (_: { })))
         {
           "nix" = { };
           "nix-util" = { };
           "nix-store" = { };
         }
-      // lib.optionalAttrs (builtins.elem system linux64BitSystems) {
+        // lib.optionalAttrs (builtins.elem system linux64BitSystems) {
         dockerImage =
           let
             pkgs = nixpkgsFor.${system}.native;
