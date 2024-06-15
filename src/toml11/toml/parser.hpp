@@ -13,6 +13,8 @@
 #include "types.hpp"
 #include "value.hpp"
 
+#include "instrumentation/instrumentation.hh"
+
 #ifndef TOML11_DISABLE_STD_FILESYSTEM
 #ifdef __cpp_lib_filesystem
 #if __has_include(<filesystem>)
@@ -311,30 +313,36 @@ inline std::string read_utf8_codepoint(const region& reg, const location& loc)
 
 inline result<std::string, std::string> parse_escape_sequence(location& loc)
 {
+    LOG_BRANCH(0);
     const auto first = loc.iter();
     if(first == loc.end() || *first != '\\')
     {
+        LOG_BRANCH(1);
         return err(format_underline("toml::parse_escape_sequence: ", {{
             source_location(loc), "the next token is not a backslash \"\\\""}}));
     }
+    LOG_BRANCH(2);
     loc.advance();
     switch(*loc.iter())
     {
-        case '\\':{loc.advance(); return ok(std::string("\\"));}
-        case '"' :{loc.advance(); return ok(std::string("\""));}
-        case 'b' :{loc.advance(); return ok(std::string("\b"));}
-        case 't' :{loc.advance(); return ok(std::string("\t"));}
-        case 'n' :{loc.advance(); return ok(std::string("\n"));}
-        case 'f' :{loc.advance(); return ok(std::string("\f"));}
-        case 'r' :{loc.advance(); return ok(std::string("\r"));}
+        case '\\':{ LOG_BRANCH(3); loc.advance(); return ok(std::string("\\"));}
+        case '"' :{ LOG_BRANCH(4); loc.advance(); return ok(std::string("\""));}
+        case 'b' :{ LOG_BRANCH(5); loc.advance(); return ok(std::string("\b"));}
+        case 't' :{ LOG_BRANCH(6); loc.advance(); return ok(std::string("\t"));}
+        case 'n' :{ LOG_BRANCH(7); loc.advance(); return ok(std::string("\n"));}
+        case 'f' :{ LOG_BRANCH(8); loc.advance(); return ok(std::string("\f"));}
+        case 'r' :{ LOG_BRANCH(9); loc.advance(); return ok(std::string("\r"));}
         case 'u' :
         {
+            LOG_BRANCH(10);
             if(const auto token = lex_escape_unicode_short::invoke(loc))
             {
+                LOG_BRANCH(11);
                 return ok(read_utf8_codepoint(token.unwrap(), loc));
             }
             else
             {
+                LOG_BRANCH(12);
                 return err(format_underline("parse_escape_sequence: "
                            "invalid token found in UTF-8 codepoint uXXXX.",
                            {{source_location(loc), "here"}}));
@@ -342,12 +350,15 @@ inline result<std::string, std::string> parse_escape_sequence(location& loc)
         }
         case 'U':
         {
+            LOG_BRANCH(13);
             if(const auto token = lex_escape_unicode_long::invoke(loc))
             {
+                LOG_BRANCH(14);
                 return ok(read_utf8_codepoint(token.unwrap(), loc));
             }
             else
             {
+                LOG_BRANCH(15);
                 return err(format_underline("parse_escape_sequence: "
                            "invalid token found in UTF-8 codepoint Uxxxxxxxx",
                            {{source_location(loc), "here"}}));
@@ -355,6 +366,7 @@ inline result<std::string, std::string> parse_escape_sequence(location& loc)
         }
     }
 
+    LOG_BRANCH(16);
     const auto msg = format_underline("parse_escape_sequence: "
            "unknown escape sequence appeared.", {{source_location(loc),
            "escape sequence is one of \\, \", b, t, n, f, r, uxxxx, Uxxxxxxxx"}},
