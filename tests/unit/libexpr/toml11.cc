@@ -86,4 +86,10 @@ TEST_F(TomlParserTest, not_binary_integer) {
     ASSERT_THAT(v, IsErr());
 }
 
+TEST_F(TomlParserTest, not_octal_integer) {
+    auto loc = toml::detail::location("test_not_octal_integer", "foo");
+    auto v = toml::detail::parse_octal_integer(loc);
+    ASSERT_THAT(v, IsErr());
+}
+
 }
