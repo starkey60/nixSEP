@@ -97,4 +97,28 @@ TEST_F(TomlParserTest, not_hexadecimal_integer) {
     auto v = toml::detail::parse_hexadecimal_integer(loc);
     ASSERT_THAT(v, IsErr());
 }
+
+TEST_F(TomlParserTest, integer_zero_zero) {
+    auto loc = toml::detail::location("test_integer_zero_zero", "00");
+    auto v = toml::detail::parse_integer(loc);
+    ASSERT_THAT(v, IsErr());
+}
+
+TEST_F(TomlParserTest, integer_zero_num) {
+    auto loc = toml::detail::location("test_integer_zero_num", "01");
+    auto v = toml::detail::parse_integer(loc);
+    ASSERT_THAT(v, IsErr());
+}
+
+TEST_F(TomlParserTest, integer_zero_alpha) {
+    auto loc = toml::detail::location("test_integer_zero_alpha", "0c");
+    auto v = toml::detail::parse_integer(loc);
+    ASSERT_THAT(v, IsErr());
+}
+
+TEST_F(TomlParserTest, not_integer) {
+    auto loc = toml::detail::location("test_not_integer", "foo");
+    auto v = toml::detail::parse_integer(loc);
+    ASSERT_THAT(v, IsErr());
+}
 }

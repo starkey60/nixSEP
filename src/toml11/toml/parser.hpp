@@ -135,36 +135,45 @@ parse_hexadecimal_integer(location& loc)
 inline result<std::pair<integer, region>, std::string>
 parse_integer(location& loc)
 {
+    LOG_BRANCH(0);
     const auto first = loc.iter();
     if(first != loc.end() && *first == '0')
     {
+        LOG_BRANCH(1);
         const auto second = std::next(first);
         if(second == loc.end()) // the token is just zero.
         {
+            LOG_BRANCH(2);
             loc.advance();
             return ok(std::make_pair(0, region(loc, first, second)));
         }
+        LOG_BRANCH(3);
 
-        if(*second == 'b') {return parse_binary_integer     (loc);} // 0b1100
-        if(*second == 'o') {return parse_octal_integer      (loc);} // 0o775
-        if(*second == 'x') {return parse_hexadecimal_integer(loc);} // 0xC0FFEE
+        if(*second == 'b') { LOG_BRANCH(4); return parse_binary_integer     (loc);} // 0b1100
+        if(*second == 'o') { LOG_BRANCH(5); return parse_octal_integer      (loc);} // 0o775
+        if(*second == 'x') { LOG_BRANCH(6); return parse_hexadecimal_integer(loc);} // 0xC0FFEE
+        LOG_BRANCH(7);
 
         if(std::isdigit(*second))
         {
+            LOG_BRANCH(8);
             return err(format_underline("toml::parse_integer: "
                 "leading zero in an Integer is not allowed.",
                 {{source_location(loc), "leading zero"}}));
         }
         else if(std::isalpha(*second))
         {
+            LOG_BRANCH(9);
              return err(format_underline("toml::parse_integer: "
                 "unknown integer prefix appeared.",
                 {{source_location(loc), "none of 0x, 0o, 0b"}}));
         }
+        LOG_BRANCH(10);
     }
 
     if(const auto token = lex_dec_int::invoke(loc))
     {
+        LOG_BRANCH(11);
         auto str = token.unwrap().str();
         str.erase(std::remove(str.begin(), str.end(), '_'), str.end());
 
@@ -173,6 +182,7 @@ parse_integer(location& loc)
         iss >> retval;
         return ok(std::make_pair(retval, token.unwrap()));
     }
+    LOG_BRANCH(12);
     loc.reset(first);
     return err(format_underline("toml::parse_integer: ",
                {{source_location(loc), "the next token is not an integer"}}));
