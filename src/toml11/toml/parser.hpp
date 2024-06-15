@@ -54,27 +54,33 @@ parse_boolean(location& loc)
 inline result<std::pair<integer, region>, std::string>
 parse_binary_integer(location& loc)
 {
+    LOG_BRANCH(0);
     const auto first = loc.iter();
     if(const auto token = lex_bin_int::invoke(loc))
     {
+        LOG_BRANCH(1);
         auto str = token.unwrap().str();
         assert(str.size() > 2); // minimum -> 0b1
         integer retval(0), base(1);
         for(auto i(str.rbegin()), e(str.rend() - 2); i!=e; ++i)
         {
-            if     (*i == '1'){retval += base; base *= 2;}
-            else if(*i == '0'){base *= 2;}
-            else if(*i == '_'){/* do nothing. */}
+            LOG_BRANCH(2);
+            if     (*i == '1'){ LOG_BRANCH(3); retval += base; base *= 2;}
+            else if(*i == '0'){ LOG_BRANCH(4); base *= 2;}
+            else if(*i == '_'){ LOG_BRANCH(5); /* do nothing. */}
             else // internal error.
             {
+                LOG_BRANCH(6);
                 throw internal_error(format_underline(
                     "toml::parse_integer: internal error",
                     {{source_location(token.unwrap()), "invalid token"}}),
                     source_location(loc));
             }
         }
+        LOG_BRANCH(7);
         return ok(std::make_pair(retval, token.unwrap()));
     }
+    LOG_BRANCH(8);
     loc.reset(first);
     return err(format_underline("toml::parse_binary_integer:",
                {{source_location(loc), "the next token is not an integer"}}));
