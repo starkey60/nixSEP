@@ -92,4 +92,9 @@ TEST_F(TomlParserTest, not_octal_integer) {
     ASSERT_THAT(v, IsErr());
 }
 
+TEST_F(TomlParserTest, not_hexadecimal_integer) {
+    auto loc = toml::detail::location("test_not_hexadecimal_integer", "foo");
+    auto v = toml::detail::parse_hexadecimal_integer(loc);
+    ASSERT_THAT(v, IsErr());
+}
 }

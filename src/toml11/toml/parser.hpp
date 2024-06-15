@@ -112,9 +112,11 @@ parse_octal_integer(location& loc)
 inline result<std::pair<integer, region>, std::string>
 parse_hexadecimal_integer(location& loc)
 {
+    LOG_BRANCH(0);
     const auto first = loc.iter();
     if(const auto token = lex_hex_int::invoke(loc))
     {
+        LOG_BRANCH(1);
         auto str = token.unwrap().str();
         str.erase(std::remove(str.begin(), str.end(), '_'), str.end());
         str.erase(str.begin()); str.erase(str.begin()); // remove `0x` prefix
@@ -124,6 +126,7 @@ parse_hexadecimal_integer(location& loc)
         iss >> std::hex >> retval;
         return ok(std::make_pair(retval, token.unwrap()));
     }
+    LOG_BRANCH(2);
     loc.reset(first);
     return err(format_underline("toml::parse_hexadecimal_integer",
                {{source_location(loc), "the next token is not an integer"}}));
