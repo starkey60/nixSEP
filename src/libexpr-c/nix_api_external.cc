@@ -12,6 +12,8 @@
 #include "nix_api_value.h"
 #include "value/context.hh"
 
+#include "instrumentation/instrumentation.hh"
+
 #include <nlohmann/json.hpp>
 
 #ifdef HAVE_BOEHMGC
@@ -186,12 +188,19 @@ ExternalValue * nix_create_external_value(nix_c_context * context, NixCExternalV
 
 void * nix_get_external_value_content(nix_c_context * context, ExternalValue * b)
 {
-    if (context)
+    LOG_BRANCH(0);
+    if (context) {
+        LOG_BRANCH(1);
         context->last_err_code = NIX_OK;
+    }
+    LOG_BRANCH(2);
     try {
         auto r = dynamic_cast<NixCExternalValue *>((nix::ExternalValueBase *) b);
-        if (r)
+        if (r) {
+            LOG_BRANCH(3);
             return r->get_ptr();
+            LOG_BRANCH(4);
+        }
         return nullptr;
     }
     NIXC_CATCH_ERRS_NULL

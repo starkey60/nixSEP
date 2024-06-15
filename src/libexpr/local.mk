@@ -10,7 +10,8 @@ libexpr_SOURCES := \
   $(wildcard $(d)/primops/*.cc) \
   $(wildcard $(d)/flake/*.cc) \
   $(d)/lexer-tab.cc \
-  $(d)/parser-tab.cc
+  $(d)/parser-tab.cc \
+  $(d)/../instrumentation/instrumentation.cc
 # Not just for this library itself, but also for downstream libraries using this library
 
 INCLUDE_libexpr := -I $(d)

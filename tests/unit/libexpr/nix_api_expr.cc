@@ -4,6 +4,7 @@
 #include "nix_api_util_internal.h"
 #include "nix_api_expr.h"
 #include "nix_api_value.h"
+#include "nix_api_external.h"
 
 #include "tests/nix_api_expr.hh"
 #include "tests/string_callback.hh"
@@ -398,5 +399,30 @@ TEST_F(nix_api_expr_test, nix_value_call_multi_no_args)
     auto rInt = nix_get_int(ctx, r);
     assert_ctx_ok();
     ASSERT_EQ(3, rInt);
+}
+
+MATCHER(IsNullPtr, "") {
+    return !arg;
+}
+
+
+MATCHER_P(IsPtrEq, p, "") {
+    return arg == p;
+}
+
+TEST_F(nix_api_expr_test, nix_get_external_value_content) {
+    nix_c_context* context = nix_c_context_create();
+    NixCExternalValueDesc nix_c_external_value = {
+        .print = NULL,
+        .showType = NULL,
+        .typeOf = NULL,
+        .coerceToString = NULL,
+        .equal = NULL,
+        .printValueAsJSON = NULL,
+        .printValueAsXML = NULL
+    };
+
+    ASSERT_THAT(nix_get_external_value_content(context, NULL), IsNullPtr());
+    ASSERT_THAT(nix_get_external_value_content(context, nix_create_external_value(context, &nix_c_external_value, (void*)50)), IsPtrEq((void*)50));
 }
 } // namespace nixC
