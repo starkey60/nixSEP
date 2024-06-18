@@ -21,6 +21,12 @@ MATCHER_P(IsCPPIntEq, d, fmt("The int is equal to \"%1%\"", d)) {
     return arg == d;
 }
 
+TEST_F(TomlParserTest, not_bool) {
+    auto loc = toml::detail::location("test_not_bool", "foo");
+    auto v = toml::detail::parse_boolean(loc);
+    ASSERT_THAT(v, IsErr());
+}
+
 TEST_F(TomlParserTest, escape_sequence) {
     {
         auto loc = toml::detail::location("test_escape_sequence_backslash", "\\\\");

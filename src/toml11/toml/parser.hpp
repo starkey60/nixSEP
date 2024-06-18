@@ -32,20 +32,30 @@ namespace detail
 inline result<std::pair<boolean, region>, std::string>
 parse_boolean(location& loc)
 {
+    LOG_BRANCH(0);
     const auto first = loc.iter();
     if(const auto token = lex_boolean::invoke(loc))
     {
+        LOG_BRANCH(1);
         const auto reg = token.unwrap();
-        if     (reg.str() == "true")  {return ok(std::make_pair(true,  reg));}
-        else if(reg.str() == "false") {return ok(std::make_pair(false, reg));}
+        if     (reg.str() == "true")  {
+            LOG_BRANCH(2);
+            return ok(std::make_pair(true,  reg));
+        }
+        else if(reg.str() == "false") {
+            LOG_BRANCH(3);
+            return ok(std::make_pair(false, reg));
+        }
         else // internal error.
         {
+            LOG_BRANCH(4);
             throw internal_error(format_underline(
                 "toml::parse_boolean: internal error",
                 {{source_location(reg), "invalid token"}}),
                 source_location(reg));
         }
     }
+    LOG_BRANCH(5);
     loc.reset(first); //rollback
     return err(format_underline("toml::parse_boolean: ",
                {{source_location(loc), "the next token is not a boolean"}}));
