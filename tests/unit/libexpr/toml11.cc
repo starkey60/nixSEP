@@ -121,4 +121,34 @@ TEST_F(TomlParserTest, not_integer) {
     auto v = toml::detail::parse_integer(loc);
     ASSERT_THAT(v, IsErr());
 }
+
+TEST_F(TomlParserTest, not_floating) {
+    auto loc = toml::detail::location("test_not_float", "foo");
+    auto v = toml::detail::parse_floating(loc);
+    ASSERT_THAT(v, IsErr());
+}
+
+TEST_F(TomlParserTest, floating_inf) {
+    auto loc = toml::detail::location("test_float_inf", "inf");
+    auto v = toml::detail::parse_floating(loc);
+    ASSERT_THAT(v, IsOk());
+}
+
+TEST_F(TomlParserTest, floating_minf) {
+    auto loc = toml::detail::location("test_float_minf", "-inf");
+    auto v = toml::detail::parse_floating(loc);
+    ASSERT_THAT(v, IsOk());
+}
+
+TEST_F(TomlParserTest, floating_nan) {
+    auto loc = toml::detail::location("test_float_nan", "nan");
+    auto v = toml::detail::parse_floating(loc);
+    ASSERT_THAT(v, IsOk());
+}
+
+TEST_F(TomlParserTest, floating_mnan) {
+    auto loc = toml::detail::location("test_float_mnan", "-nan");
+    auto v = toml::detail::parse_floating(loc);
+    ASSERT_THAT(v, IsOk());
+}
 }

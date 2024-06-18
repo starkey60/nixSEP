@@ -191,19 +191,24 @@ parse_integer(location& loc)
 inline result<std::pair<floating, region>, std::string>
 parse_floating(location& loc)
 {
+    LOG_BRANCH(0);
     const auto first = loc.iter();
     if(const auto token = lex_float::invoke(loc))
     {
+        LOG_BRANCH(1);
         auto str = token.unwrap().str();
         if(str == "inf" || str == "+inf")
         {
+            LOG_BRANCH(2);
             if(std::numeric_limits<floating>::has_infinity)
             {
+                LOG_BRANCH(3);
                 return ok(std::make_pair(
                     std::numeric_limits<floating>::infinity(), token.unwrap()));
             }
             else
             {
+                LOG_BRANCH(4);
                 throw std::domain_error("toml::parse_floating: inf value found"
                     " but the current environment does not support inf. Please"
                     " make sure that the floating-point implementation conforms"
@@ -212,13 +217,16 @@ parse_floating(location& loc)
         }
         else if(str == "-inf")
         {
+            LOG_BRANCH(5);
             if(std::numeric_limits<floating>::has_infinity)
             {
+                LOG_BRANCH(6);
                 return ok(std::make_pair(
                     -std::numeric_limits<floating>::infinity(), token.unwrap()));
             }
             else
             {
+                LOG_BRANCH(7);
                 throw std::domain_error("toml::parse_floating: inf value found"
                     " but the current environment does not support inf. Please"
                     " make sure that the floating-point implementation conforms"
@@ -227,18 +235,22 @@ parse_floating(location& loc)
         }
         else if(str == "nan" || str == "+nan")
         {
+            LOG_BRANCH(8);
             if(std::numeric_limits<floating>::has_quiet_NaN)
             {
+                LOG_BRANCH(9);
                 return ok(std::make_pair(
                     std::numeric_limits<floating>::quiet_NaN(), token.unwrap()));
             }
             else if(std::numeric_limits<floating>::has_signaling_NaN)
             {
+                LOG_BRANCH(10);
                 return ok(std::make_pair(
                     std::numeric_limits<floating>::signaling_NaN(), token.unwrap()));
             }
             else
             {
+                LOG_BRANCH(11);
                 throw std::domain_error("toml::parse_floating: NaN value found"
                     " but the current environment does not support NaN. Please"
                     " make sure that the floating-point implementation conforms"
@@ -247,30 +259,36 @@ parse_floating(location& loc)
         }
         else if(str == "-nan")
         {
+            LOG_BRANCH(12);
             if(std::numeric_limits<floating>::has_quiet_NaN)
             {
+                LOG_BRANCH(13);
                 return ok(std::make_pair(
                     -std::numeric_limits<floating>::quiet_NaN(), token.unwrap()));
             }
             else if(std::numeric_limits<floating>::has_signaling_NaN)
             {
+                LOG_BRANCH(14);
                 return ok(std::make_pair(
                     -std::numeric_limits<floating>::signaling_NaN(), token.unwrap()));
             }
             else
             {
+                LOG_BRANCH(15);
                 throw std::domain_error("toml::parse_floating: NaN value found"
                     " but the current environment does not support NaN. Please"
                     " make sure that the floating-point implementation conforms"
                     " IEEE 754/ISO 60559 international standard.");
             }
         }
+        LOG_BRANCH(16);
         str.erase(std::remove(str.begin(), str.end(), '_'), str.end());
         std::istringstream iss(str);
         floating v(0.0);
         iss >> v;
         return ok(std::make_pair(v, token.unwrap()));
     }
+    LOG_BRANCH(17);
     loc.reset(first);
     return err(format_underline("toml::parse_floating: ",
                {{source_location(loc), "the next token is not a float"}}));
