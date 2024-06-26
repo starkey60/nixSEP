@@ -2,23 +2,23 @@
 
 ## Project chosen
 
-Name: nix
+Name: `nix`
 
 URL: https://github.com/NixOS/nix
 
 Number of lines of code and the tool used to count it: 122773 lines.
 
-Used shell command: "find . -name '*.cc' -or -name '*.hh' -or -name '*.hpp' -or -name '*.cpp' | xargs wc -l
-"
+Used shell command: `find . -name '*.cc' -or -name '*.hh' -or -name '*.hpp' -or -name '*.cpp' | xargs wc -l`
 
-Programming language: c++
+Programming language: `C++`
 
 ## Coverage measurement
 
 ### Existing tool
 
-Tool used: GCOV. 
-Command to run: nix build .#hydraJobs.coverage 
+Tool used: [GCOV](https://gcc.gnu.org/onlinedocs/gcc/Gcov.html).
+
+Command to run: `nix build .#hydraJobs.coverage`
 
 ![overall coverage](overall_cov_before_tests.png)
 
